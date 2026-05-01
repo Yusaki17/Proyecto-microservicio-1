@@ -12,6 +12,7 @@ spring:
               uri: lb://product-microservice
               predicates:
                 - Path=/api/v1/products/**
+                - Path=/api/v1/categories/**
             - id: cart-microservice
               uri: lb://cart-microservice
               predicates:

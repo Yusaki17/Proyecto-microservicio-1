@@ -27,3 +27,4 @@
         name: logs/cart-microservice.log
         max-size: 10MB
         max-history: 30
+

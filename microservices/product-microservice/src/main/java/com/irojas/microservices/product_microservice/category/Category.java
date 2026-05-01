@@ -15,7 +15,8 @@ import java.util.List;
 @Builder
 public class Category {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "category_seq")
+    @SequenceGenerator(name = "category_seq", sequenceName = "categories_seq", allocationSize = 50)
     private Integer id;
     private String name;
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY,cascade = CascadeType.ALL)

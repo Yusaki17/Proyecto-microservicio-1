@@ -1,11 +1,13 @@
 # Ignorar carpetas y archivos generados por el sistema de construcción Maven
-**/target/
 **/.git/
 **/.idea/
 **/.vscode/
 .mvn/
 **/mvnw
 **/mvnw.cmd
+
+# Permitir los jars compilados (necesarios para Docker)
+!**/target/*.jar
 
 # Ignorar archivos de IDEs
 .idea/
@@ -21,7 +23,7 @@ tmp/
 .git
 .gitignore
 
-# Ignorar el propio Dockerfile y Docker Compose (Opcional pero limpio)
+# Ignorar el propio Dockerfile y Docker Compose
 Dockerfile
 docker-compose.yml
 .dockerignore
