@@ -1,4 +1,5 @@
 package com.irojas.microservices.cart_microservice.cart;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import com.irojas.microservices.cart_microservice.exceptions.CartException;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CartService {
     private final CartRepository cartRepository;
     private final CartMapper cartMapper;
@@ -27,4 +29,5 @@ public class CartService {
         cartRepository.delete(cart);
 
     }
+
 }

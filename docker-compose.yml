@@ -46,15 +46,15 @@
 
     config-server:
       build:
-        context: .
-        dockerfile: ./config-server/Dockerfile
+        context: ./config-server
+        dockerfile: Dockerfile
       container_name: config-server
       ports:
         - "${CONFIG_SERVER_PORT}:8888"
       networks:
         - microservices
       healthcheck:
-        test: [ "CMD", "curl", "-f", "http://config-server:${CONFIG_SERVER_PORT}/actuator/health" ]
+        test: [ "CMD", "curl", "-f", "http://config-server:8888/actuator/health" ]
         interval: 20s
         timeout: 3s
         retries: 5
@@ -62,8 +62,8 @@
 
     discovery-server:
       build:
-        context: .
-        dockerfile: ./discovery-server/Dockerfile
+        context: ./discovery-server
+        dockerfile: Dockerfile
       container_name: discovery-server
       depends_on:
         config-server:
@@ -71,7 +71,7 @@
       ports:
         - "${EUREKA_SERVER_PORT}:8761"
       environment:
-        - SPRING_CONFIG_IMPORT=configserver:http://config-server:${CONFIG_SERVER_PORT}
+        - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       networks:
         - microservices
       healthcheck:
@@ -83,8 +83,8 @@
 
     customer-microservice:
       build:
-        context: .
-        dockerfile: ./microservices/customer-microservice/Dockerfile
+        context: ./microservices/customer-microservice
+        dockerfile: Dockerfile
       container_name: customer-microservice
       depends_on:
         config-server:
@@ -96,9 +96,9 @@
       ports:
         - "${CUSTOMER_MICROSERVICE_PORT}:8091"
       environment:
-        - SPRING_CONFIG_IMPORT=configserver:http://config-server:${CONFIG_SERVER_PORT}
-        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:${EUREKA_SERVER_PORT}/eureka/
-        - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:${MYSQL_PORT}/${CUSTOMER_DB_NAME}?createDatabaseIfNotExist=true
+        - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+        - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/${CUSTOMER_DB_NAME}?createDatabaseIfNotExist=true
         - SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
         - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
         - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
@@ -107,8 +107,8 @@
 
     product-microservice:
       build:
-        context: .
-        dockerfile: ./microservices/product-microservice/Dockerfile
+        context: ./microservices/product-microservice
+        dockerfile: Dockerfile
       container_name: product-microservice
       depends_on:
         config-server:
@@ -124,8 +124,8 @@
         - SPRING_DATASOURCE_USERNAME=${ORACLE_USERNAME}
         - SPRING_DATASOURCE_PASSWORD=${ORACLE_PWD}
         - SPRING_DATASOURCE_DRIVER_CLASS_NAME=oracle.jdbc.OracleDriver
-        - SPRING_CONFIG_IMPORT=configserver:http://config-server:${CONFIG_SERVER_PORT}
-        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:${EUREKA_SERVER_PORT}/eureka/
+        - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
         - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.OracleDialect          # ← AGREGAR
         - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.OracleDialect
       networks:
@@ -133,8 +133,8 @@
 
     cart-microservice:
       build:
-        context: .
-        dockerfile: ./microservices/cart-microservice/Dockerfile
+        context: ./microservices/cart-microservice
+        dockerfile: Dockerfile
       container_name: cart-microservice
       depends_on:
         config-server:
@@ -146,18 +146,41 @@
       ports:
         - "${CART_MICROSERVICE_PORT}:8093"
       environment:
-        - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:${POSTGRESQL_DB_PORT}/${CART_DB_NAME}
+        - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/${CART_DB_NAME}
         - SPRING_DATASOURCE_USERNAME=${POSTGRESQL_DB_USERNAME}
         - SPRING_DATASOURCE_PASSWORD=${POSTGRESQL_DB_PASSWORD}
-        - SPRING_CONFIG_IMPORT=configserver:http://config-server:${CONFIG_SERVER_PORT}
-        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:${EUREKA_SERVER_PORT}/eureka/
+        - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      networks:
+        - microservices
+
+    auth-microservice:
+      build:
+        context: ./microservices/auth-microservice
+        dockerfile: Dockerfile
+      container_name: auth-microservice
+      depends_on:
+        config-server:
+          condition: service_healthy
+        discovery-server:
+          condition: service_healthy
+        mysqldb:
+          condition: service_started
+      ports:
+        - "8094:8094"
+      environment:
+        - SPRING_DATASOURCE_URL_AUTH=jdbc:mysql://mysqldb:3306/auth_db?createDatabaseIfNotExist=true
+        - SPRING_DATASOURCE_USERNAME=${MYSQL_USER}
+        - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
+        - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
       networks:
         - microservices
 
     api-gateway:
       build:
-        context: .
-        dockerfile: ./api-gateway/Dockerfile
+        context: ./api-gateway
+        dockerfile: Dockerfile
       container_name: api-gateway
       depends_on:
         config-server:
@@ -167,8 +190,29 @@
       ports:
         - "${API_GATEWAY_PORT}:8222"
       environment:
-        - SPRING_CONFIG_IMPORT=configserver:http://config-server:${CONFIG_SERVER_PORT}
-        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:${EUREKA_SERVER_PORT}/eureka/
+        - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      networks:
+        - microservices
+    prometheus:
+      image: prom/prometheus:latest
+      ports:
+        - "${PROMETHEUS_PORT}:9090"
+      volumes:
+        - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      networks:
+        - microservices
+    grafana:
+      image: grafana/grafana:latest
+      ports:
+        - "${GRAFANA_PORT}:3000"
+      volumes:
+        - grafana_data:/var/lib/grafana
+      environment:
+        - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
+        - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+      depends_on:
+        - prometheus
       networks:
         - microservices
 
@@ -176,6 +220,7 @@
     mysql_data:
     oracle_data:
     postgres:
+    grafana_data:
 
   networks:
     microservices:

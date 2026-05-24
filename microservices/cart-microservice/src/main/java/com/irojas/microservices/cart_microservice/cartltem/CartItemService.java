@@ -6,6 +6,7 @@ import com.irojas.microservices.cart_microservice.customer.CustomerClient;
 import com.irojas.microservices.cart_microservice.customer.CustomerResponse;
 import com.irojas.microservices.cart_microservice.exceptions.CartException;
 import com.irojas.microservices.cart_microservice.product.ProductClient;
+import com.irojas.microservices.cart_microservice.product.ProductClientService;
 import com.irojas.microservices.cart_microservice.product.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,9 @@ public class CartItemService {
 
     private final CartRepository cartRepository;
     private final CustomerClient customerClient;
-    private final ProductClient productClient;
+    private final ProductClientService productClientService;
 
+    private CartItemService self;
     public Integer addItemToCart(Integer customerId, CartItemRequest cartItemRequest) {
         if (cartItemRequest.quantity() <= 0) {
             throw new CartException("La cantidad debe ser mayor a cero");
@@ -27,8 +29,9 @@ public class CartItemService {
         CustomerResponse customerResponse = customerClient.getCustomerById(customerId)
                 .orElseThrow(() -> new CartException("Customer with ID " + customerId + " does not exist"));
 
-        ProductResponse productResponse = productClient.getProductById(cartItemRequest.productId())
-                .orElseThrow(() -> new CartException("Product with ID " + cartItemRequest.productId() + "does not exist"));
+        ProductResponse productResponse = productClientService.getProductById(cartItemRequest.productId())
+                .orElseThrow(() -> new CartException("Product with ID " + cartItemRequest.productId() + " does not exist"));
+
         if (productResponse.stock() < cartItemRequest.quantity()) {
             throw new CartException("Product with ID " + cartItemRequest.productId() + " does not have enough stock");
         }
@@ -54,7 +57,6 @@ public class CartItemService {
         );
 
         cartRepository.save(cart);
-
         return cart.getId();
     }
 
@@ -71,7 +73,7 @@ public class CartItemService {
                 .findFirst()
                 .orElseThrow(() -> new CartException("Product with id " + cartItemRequest.productId() + " is not in the cart"));
 
-        ProductResponse productResponse = productClient.getProductById(cartItemRequest.productId())
+        ProductResponse productResponse = productClientService.getProductById(cartItemRequest.productId())
                 .orElseThrow(() -> new CartException("Producto con ID " + cartItemRequest.productId() + " no existe"));
 
         if (productResponse.stock() < cartItemRequest.quantity()) {
