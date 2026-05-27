@@ -17,7 +17,6 @@ eureka:
     service-url:
       defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
 
-# ✅ Agrega esto
 resilience4j:
   circuitbreaker:
     instances:
@@ -30,7 +29,7 @@ resilience4j:
     instances:
       productService:
         limitForPeriod: 5
-        limitRefreshPeriod: 1s
+        limitRefreshPeriod: 10s
         timeoutDuration: 0s
   retry:
     instances:
@@ -54,7 +53,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"  # ✅ habilita todos
+        include: "*"
   endpoint:
     health:
       show-details: always

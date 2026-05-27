@@ -21,10 +21,21 @@ spring:
             - id: cart-microservice
               uri: lb://cart-microservice
               predicates:
-                - Path=/api/v1/cart/**
+                - Path=/api/v1/*/cart/**
+            - id: cart-microservice-swagger
+              uri: lb://cart-microservice
+              predicates:
+                - Path=/api/v1/cart/v3/api-docs
               filters:
                 - PreserveHostHeader
                 - RewritePath=/api/v1/cart/v3/api-docs, /v3/api-docs
+            - id: auth-microservice
+              uri: lb://auth-microservice
+              predicates:
+                - Path=/api/v1/auth/**
+              filters:
+                - PreserveHostHeader
+                - RewritePath=/api/v1/auth/v3/api-docs, /v3/api-docs
 
 eureka:
   client:
@@ -61,3 +72,5 @@ springdoc:
         url: /api/v1/products/v3/api-docs
       - name: Cart Microservice
         url: /api/v1/cart/v3/api-docs
+      - name: Auth Microservice
+        url: /api/v1/auth/v3/api-docs

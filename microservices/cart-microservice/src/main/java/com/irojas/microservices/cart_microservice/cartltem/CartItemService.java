@@ -5,7 +5,6 @@ import com.irojas.microservices.cart_microservice.cart.CartRepository;
 import com.irojas.microservices.cart_microservice.customer.CustomerClient;
 import com.irojas.microservices.cart_microservice.customer.CustomerResponse;
 import com.irojas.microservices.cart_microservice.exceptions.CartException;
-import com.irojas.microservices.cart_microservice.product.ProductClient;
 import com.irojas.microservices.cart_microservice.product.ProductClientService;
 import com.irojas.microservices.cart_microservice.product.ProductResponse;
 import lombok.RequiredArgsConstructor;

@@ -109,7 +109,6 @@
       build:
         context: ./microservices/product-microservice
         dockerfile: Dockerfile
-      container_name: product-microservice
       depends_on:
         config-server:
           condition: service_healthy
@@ -117,8 +116,6 @@
           condition: service_healthy
         oracle:
           condition: service_started
-      ports:
-        - "${PRODUCT_MICROSERVICE_PORT}:8092"
       environment:
         - SPRING_DATASOURCE_URL=jdbc:oracle:thin:@oracle-db:1521/${PRODUCT_DB_NAME}
         - SPRING_DATASOURCE_USERNAME=${ORACLE_USERNAME}
@@ -135,7 +132,6 @@
       build:
         context: ./microservices/cart-microservice
         dockerfile: Dockerfile
-      container_name: cart-microservice
       depends_on:
         config-server:
           condition: service_healthy
@@ -143,8 +139,6 @@
           condition: service_healthy
         postgresql:
           condition: service_started
-      ports:
-        - "${CART_MICROSERVICE_PORT}:8093"
       environment:
         - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/${CART_DB_NAME}
         - SPRING_DATASOURCE_USERNAME=${POSTGRESQL_DB_USERNAME}
