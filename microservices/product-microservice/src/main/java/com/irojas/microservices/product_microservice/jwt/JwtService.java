@@ -1,4 +1,4 @@
-package com.irojas.api_gateway.jwt;
+package com.irojas.microservices.product_microservice.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -9,11 +9,13 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.List;
+import java.util.function.Function;
 
 @Service
 public class JwtService {
 
-    @Value("${jwt.secret}")
+    @Value("${JWT_SECRET}")
     private String secretKey;
 
     private SecretKey getSigningKey() {
@@ -22,11 +24,27 @@ public class JwtService {
     }
 
     public String extractUsername(String token) {
-        return extractAllClaims(token).getSubject();
+        return extractClaim(token, Claims::getSubject);
     }
 
     public Date extractExpiration(String token) {
-        return extractAllClaims(token).getExpiration();
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    // ✅ Extraer roles del token (viene del auth-microservice)
+    @SuppressWarnings("unchecked")
+    public List<String> extractRoles(String token) {
+        Claims claims = extractAllClaims(token);
+        Object roles = claims.get("roles");
+        if (roles instanceof List<?>) {
+            return (List<String>) roles;
+        }
+        return List.of();
+    }
+
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
     }
 
     private Claims extractAllClaims(String token) {
@@ -41,6 +59,7 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
+    // ✅ Solo valida la firma y expiración, NO consulta BD
     public Boolean isTokenValid(String token) {
         try {
             return !isTokenExpired(token);

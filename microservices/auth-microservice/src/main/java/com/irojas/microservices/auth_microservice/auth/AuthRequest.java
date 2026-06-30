@@ -1,6 +1,15 @@
 package com.irojas.microservices.auth_microservice.auth;
 
-public record AuthRequest(
-        String email,
-        String password
-) {}
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class AuthRequest {
+    private String username;
+    private String password;
+}

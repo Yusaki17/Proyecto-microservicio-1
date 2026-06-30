@@ -29,13 +29,14 @@ spring:
               filters:
                 - PreserveHostHeader
                 - RewritePath=/api/v1/cart/v3/api-docs, /v3/api-docs
-            - id: auth-microservice
+            - id: auth-microservice-public
               uri: lb://auth-microservice
               predicates:
-                - Path=/api/v1/auth/**
+                - Path=/api/v1/auth/**  # ← Captura TODAS las rutas de /api/v1/auth/
               filters:
                 - PreserveHostHeader
-                - RewritePath=/api/v1/auth/v3/api-docs, /v3/api-docs
+              metadata:
+                secure: false
 
 eureka:
   client:
@@ -44,11 +45,10 @@ eureka:
 
 logging:
   level:
-    root: DEBUG
-    org.springframework.cloud.gateway: TRACE
+    root: INFO
+    org.springframework.cloud.gateway: DEBUG
     org.springframework.http.server.reactive: DEBUG
     org.springframework.web.reactive: DEBUG
-    reactor.ipc.netty: DEBUG
     reactor.netty: DEBUG
 
 server:
@@ -74,3 +74,16 @@ springdoc:
         url: /api/v1/cart/v3/api-docs
       - name: Auth Microservice
         url: /api/v1/auth/v3/api-docs
+
+jwt:
+  secret: ${JWT_SECRET:your-256-bit-secret-key-for-jwt-token-generation-must-be-at-least-256-bits-long-for-hs256-algorithm}
+
+security:
+  filter:
+    exclude-paths:
+      - /api/v1/auth/login
+      - /api/v1/auth/register
+      - /api/v1/auth/refresh-token
+      - /v3/api-docs/**
+      - /swagger-ui/**
+      - /actuator/**

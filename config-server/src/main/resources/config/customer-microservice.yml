@@ -52,4 +52,8 @@ springdoc:
         name: Equipo de Soporte
         email: support@mail.com
 
+# JWT Configuration (DEBE SER LA MISMA CLAVE QUE EN AUTH-MICROSERVICE)
+jwt:
+  secret: ${JWT_SECRET:your-256-bit-secret-key-for-jwt-token-generation-must-be-at-least-256-bits-long-for-hs256-algorithm}
+
 
