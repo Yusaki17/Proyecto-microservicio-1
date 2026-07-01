@@ -14,7 +14,7 @@ spring:
             - id: product-microservice
               uri: lb://product-microservice
               predicates:
-                - Path=/api/v1/products/**
+                - Path=/api/v1/products/**,/api/v1/categories/**
               filters:
                 - PreserveHostHeader
                 - RewritePath=/api/v1/products/v3/api-docs, /v3/api-docs
@@ -37,6 +37,19 @@ spring:
                 - PreserveHostHeader
               metadata:
                 secure: false
+            - id: payment-microservice
+              uri: lb://payment-microservice
+              predicates:
+                - Path=/api/v1/payments/**
+              filters:
+                - PreserveHostHeader
+            - id: category-microservice-swagger
+              uri: lb://product-microservice
+              predicates:
+                - Path=/api/v1/categories/v3/api-docs
+              filters:
+                - PreserveHostHeader
+                - RewritePath=/api/v1/categories/v3/api-docs, /v3/api-docs
 
 eureka:
   client:
@@ -74,6 +87,10 @@ springdoc:
         url: /api/v1/cart/v3/api-docs
       - name: Auth Microservice
         url: /api/v1/auth/v3/api-docs
+      - name: Payemnt Microservice
+        url: /api/v1/payments/v3/api-docs
+      - name: Category Microservice  # ← AGREGAR ESTO
+        url: /api/v1/categories/v3/api-docs
 
 jwt:
   secret: ${JWT_SECRET:your-256-bit-secret-key-for-jwt-token-generation-must-be-at-least-256-bits-long-for-hs256-algorithm}

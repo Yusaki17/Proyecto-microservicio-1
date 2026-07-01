@@ -123,6 +123,8 @@ services:
         condition: service_healthy
       oracle:
         condition: service_started
+    ports:
+      - "${PRODUCT_MICROSERVICE_PORT}:8092"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:oracle:thin:@oracle-db:1521/${PRODUCT_DB_NAME}
       - SPRING_DATASOURCE_USERNAME=${ORACLE_USERNAME}
@@ -147,6 +149,8 @@ services:
         condition: service_healthy
       postgresql:
         condition: service_started
+    ports:
+      - "${CART_MICROSERVICE_PORT}:8095"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/${CART_DB_NAME}
       - SPRING_DATASOURCE_USERNAME=${POSTGRESQL_DB_USERNAME}
@@ -176,6 +180,30 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    networks:
+      - microservices
+
+  payment-microservice:
+    build:
+      context: ./microservices/payment-microservice
+      dockerfile: Dockerfile
+    container_name: payment-microservice
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      postgresql:
+        condition: service_started
+    ports:
+      - "${PAYMENT_MICROSERVICE_PORT}:8096"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/${PAYMENT_DB_NAME}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRESQL_DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRESQL_DB_PASSWORD}
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - JWT_SECRET=${JWT_SECRET}
     networks:
       - microservices
 

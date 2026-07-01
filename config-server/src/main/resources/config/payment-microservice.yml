@@ -1,0 +1,78 @@
+server:
+  port: 8096
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      productService:
+        slidingWindowSize: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 2
+  ratelimiter:
+    instances:
+      productService:
+        limitForPeriod: 5
+        limitRefreshPeriod: 10s
+        timeoutDuration: 0s
+  retry:
+    instances:
+      productService:
+        maxAttempts: 3
+        waitDuration: 2s
+
+logging:
+  level:
+    root: INFO
+    com.irojas.microservices: WARN
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n'
+    file: '%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n'
+  file:
+    name: logs/payment-microservice.log
+    max-size: 10MB
+    max-history: 30
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+    ratelimiters:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+springdoc:
+  openapi:
+    info:
+      title: Payment Microservice API
+      description: Service for managing shopping payment in the e-commerce application.
+      version: 1.0.0
+      contact:
+        name: Equipo de Soporte
+        email: support@mail.com

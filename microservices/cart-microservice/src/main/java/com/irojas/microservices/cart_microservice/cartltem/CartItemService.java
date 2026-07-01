@@ -25,7 +25,7 @@ public class CartItemService {
         if (cartItemRequest.quantity() <= 0) {
             throw new CartException("La cantidad debe ser mayor a cero");
         }
-        CustomerResponse customerResponse = customerClient.getCustomerById(customerId)
+        CustomerResponse customerResponse =     customerClient.getCustomerById(customerId)
                 .orElseThrow(() -> new CartException("Customer with ID " + customerId + " does not exist"));
 
         ProductResponse productResponse = productClientService.getProductById(cartItemRequest.productId())

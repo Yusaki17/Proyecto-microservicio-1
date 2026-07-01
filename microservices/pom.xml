@@ -23,6 +23,7 @@
         <module>product-microservice</module>
         <module>cart-microservice</module>
         <module>auth-microservice</module>
+        <module>payment-microservice</module>
     </modules>
 
     <properties>
