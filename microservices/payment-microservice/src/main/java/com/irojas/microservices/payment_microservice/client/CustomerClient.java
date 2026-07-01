@@ -1,12 +1,12 @@
 package com.irojas.microservices.payment_microservice.client;
 
+import com.irojas.microservices.payment_microservice.config.FeignConfig;  // ← AGREGAR
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 
-@FeignClient(name = "CUSTOMER-MICROSERVICE")
+@FeignClient(name = "customer-microservice", configuration = FeignConfig.class)  // ← CAMBIAR
 public interface CustomerClient {
-
     @GetMapping("/api/v1/customers/{id}")
     CustomerResponse getCustomerById(@PathVariable("id") Long id);
 
