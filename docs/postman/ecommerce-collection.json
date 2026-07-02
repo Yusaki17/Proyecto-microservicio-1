@@ -1,0 +1,659 @@
+{
+  "info": {
+    "name": "E-commerce Microservices",
+    "description": "Colección completa de endpoints para el proyecto de microservicios e-commerce",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8222/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth-microservice",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"Gina\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Autenticar usuario y obtener token JWT"
+          }
+        },
+        {
+          "name": "Registrar Usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"Yusaki\",\n  \"password\": \"654321\",\n  \"email\": \"yusaki@email.com\",\n  \"nombre\": \"Yusaki Perez\",\n  \"pais\": \"Peru\",\n  \"saldo\": 1000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Registrar nuevo usuario"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Customer-microservice",
+      "item": [
+        {
+          "name": "CrearCliente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"nuevo_cliente\",\n  \"password\": \"123456\",\n  \"email\": \"nuevo@email.com\",\n  \"nombre\": \"Cliente Nuevo\",\n  \"pais\": \"Peru\",\n  \"saldo\": 500\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/customers",
+              "host": ["{{base_url}}"],
+              "path": ["customers"]
+            },
+            "description": "Crear nuevo cliente (ADMIN)"
+          }
+        },
+        {
+          "name": "ListarCliente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/customers",
+              "host": ["{{base_url}}"],
+              "path": ["customers"]
+            },
+            "description": "Listar todos los clientes"
+          }
+        },
+        {
+          "name": "BuscarCliente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/customers/1",
+              "host": ["{{base_url}}"],
+              "path": ["customers", "1"]
+            },
+            "description": "Buscar cliente por ID"
+          }
+        },
+        {
+          "name": "EditarCliente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"Gina\",\n  \"password\": \"123456\",\n  \"email\": \"gina@gmail.com\",\n  \"nombre\": \"Gina Ruiz\",\n  \"pais\": \"Peru\",\n  \"saldo\": 200\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/customers/1",
+              "host": ["{{base_url}}"],
+              "path": ["customers", "1"]
+            },
+            "description": "Editar cliente existente (ADMIN)"
+          }
+        },
+        {
+          "name": "EliminarCliente",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/customers/1",
+              "host": ["{{base_url}}"],
+              "path": ["customers", "1"]
+            },
+            "description": "Eliminar cliente (ADMIN)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products-microservice",
+      "item": [
+        {
+          "name": "Productos",
+          "item": [
+            {
+              "name": "CrearProducto",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Laptop Gaming\",\n  \"description\": \"Laptop para gaming de alta gama\",\n  \"price\": 1500.00,\n  \"stock\": 10,\n  \"categoryId\": 1\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/products",
+                  "host": ["{{base_url}}"],
+                  "path": ["products"]
+                },
+                "description": "Crear nuevo producto (ADMIN)"
+              }
+            },
+            {
+              "name": "ListarProducto",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/products",
+                  "host": ["{{base_url}}"],
+                  "path": ["products"]
+                },
+                "description": "Listar todos los productos"
+              }
+            },
+            {
+              "name": "BuscarProducto",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/products/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "1"]
+                },
+                "description": "Buscar producto por ID"
+              }
+            },
+            {
+              "name": "EditarProducto",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Laptop Gaming Pro\",\n  \"description\": \"Laptop gaming mejorada\",\n  \"price\": 1800.00,\n  \"stock\": 15,\n  \"categoryId\": 1\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/products/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "1"]
+                },
+                "description": "Editar producto (ADMIN)"
+              }
+            },
+            {
+              "name": "EliminarProducto",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/products/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "1"]
+                },
+                "description": "Eliminar producto (ADMIN)"
+              }
+            },
+            {
+              "name": "AgregarStock",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/products/1/stock?quantity=5",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "1", "stock"],
+                  "query": [
+                    {
+                      "key": "quantity",
+                      "value": "5"
+                    }
+                  ]
+                },
+                "description": "Actualizar stock de producto (ADMIN)"
+              }
+            },
+            {
+              "name": "CompraProductos",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"productId\": 1,\n  \"quantity\": 2\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/products/1/purchase",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "1", "purchase"]
+                },
+                "description": "Comprar producto"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Categoria",
+          "item": [
+            {
+              "name": "CrearCategoria",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Electrónica\",\n  \"description\": \"Productos electrónicos\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/categories",
+                  "host": ["{{base_url}}"],
+                  "path": ["categories"]
+                },
+                "description": "Crear nueva categoría (ADMIN)"
+              }
+            },
+            {
+              "name": "ListarCategoria",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/categories",
+                  "host": ["{{base_url}}"],
+                  "path": ["categories"]
+                },
+                "description": "Listar todas las categorías"
+              }
+            },
+            {
+              "name": "BuscarCategoria",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/categories/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["categories", "1"]
+                },
+                "description": "Buscar categoría por ID"
+              }
+            },
+            {
+              "name": "EditarCategoria",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Electrónica Premium\",\n  \"description\": \"Productos electrónicos de alta gama\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/categories/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["categories", "1"]
+                },
+                "description": "Editar categoría (ADMIN)"
+              }
+            },
+            {
+              "name": "EliminarCategoria",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/categories/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["categories", "1"]
+                },
+                "description": "Eliminar categoría (ADMIN)"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cart-microservice",
+      "item": [
+        {
+          "name": "addItem",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": 1,\n  \"quantity\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/1/cart/items",
+              "host": ["{{base_url}}"],
+              "path": ["1", "cart", "items"]
+            },
+            "description": "Agregar item al carrito"
+          }
+        },
+        {
+          "name": "getCart",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/1/cart/",
+              "host": ["{{base_url}}"],
+              "path": ["1", "cart"]
+            },
+            "description": "Obtener carrito del cliente"
+          }
+        },
+        {
+          "name": "updateItem",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": 1,\n  \"quantity\": 3\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/1/cart/items",
+              "host": ["{{base_url}}"],
+              "path": ["1", "cart", "items"]
+            },
+            "description": "Actualizar cantidad de item en carrito"
+          }
+        },
+        {
+          "name": "removeItem",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/1/cart/items/1",
+              "host": ["{{base_url}}"],
+              "path": ["1", "cart", "items", "1"]
+            },
+            "description": "Remover item específico del carrito"
+          }
+        },
+        {
+          "name": "clearCart",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/1/cart/",
+              "host": ["{{base_url}}"],
+              "path": ["1", "cart"]
+            },
+            "description": "Limpiar todo el carrito"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payment-microservice",
+      "item": [
+        {
+          "name": "ProcessPayment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": 1,\n  \"cartId\": 1,\n  \"paymentMethod\": \"SALDO_NEXUS\",\n  \"cardNumber\": \"1234567890123456\",\n  \"cardExpiry\": \"12/28\",\n  \"cardCvv\": \"123\",\n  \"cardHolderName\": \"Gina Ruiz\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/process",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "process"]
+            },
+            "description": "Procesar pago"
+          }
+        },
+        {
+          "name": "GetPaymentsByCustomer",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/customer/1",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "customer", "1"]
+            },
+            "description": "Obtener pagos de un cliente"
+          }
+        },
+        {
+          "name": "GetPaymentById",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/1",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "1"]
+            },
+            "description": "Obtener pago por ID"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pruebas de resiliencia",
+      "item": [
+        {
+          "name": "Test Circuit Breaker",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": ["{{base_url}}"],
+              "path": ["products"]
+            },
+            "description": "Prueba de circuit breaker"
+          }
+        }
+      ]
+    }
+  ]
+}
